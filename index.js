@@ -13,26 +13,25 @@ app.use(cookieParser());
 app.use(express.static("public"));
 
 app.get("/petition", (req, res) => {
-    //go to the petition and talk to the db and then
     if (req.cookies.signed) {
-        res.redirect("/signed");
+        res.redirect("petition/signed");
     } else {
         res.render("petition", {
             layout: "main",
             error: false,
         });
 
-        db.getSignature()
-            .then((results) => {
-                // console.log(results);
-                //results = data we requested from db
-                //results is a huge object with lots of stuff in it
-                // we care about a property inside of results called "rows"
-                // res.render() ???
-            })
-            .catch((err) => {
-                console.log("err in GET", err);
-            });
+        // db.getSignature()
+        //     .then((results) => {
+        //         // console.log("results", results.rows);
+        //         //results = data we requested from db
+        //         //results is a huge object with lots of stuff in it
+        //         // we care about a property inside of results called "rows"
+        //         // res.render() ???
+        //     })
+        //     .catch((err) => {
+        //         console.log("err in GET", err);
+        //     });
     }
 });
 
@@ -55,7 +54,7 @@ app.post("/petition", (req, res) => {
         });
     // console.log("req.cookies:", req.cookies);
 });
-app.get("/thanks", (req, res) => {
+app.get("/petition/thanks", (req, res) => {
     if (!req.cookies.signed) {
         res.redirect("/petition");
     } else {
@@ -63,9 +62,12 @@ app.get("/thanks", (req, res) => {
             layout: "main",
         });
     }
+    db.getSigners().then((results) => {
+        console.log("results", results);
+    });
 });
 
-app.get("/signed", (req, res) => {
+app.get("/petition/signed", (req, res) => {
     if (!req.cookies.signed) {
         res.redirect("/petition");
     } else {

@@ -3,12 +3,12 @@
 const spicedPg = require("spiced-pg");
 const db = spicedPg("postgres:postgres:Hoda@localhost:5432/petition");
 
-module.exports.getSignature = function () {
-    //make the table in signatures and figure out which kind of query is relevant for us
-    let q = "SELECT * FROM signatures";
+// module.exports.getSignature = function () {
+//     //make the table in signatures and figure out which kind of query is relevant for us
+//     let q = "SELECT * FROM signatures";
 
-    return db.query(q);
-};
+//     return db.query(q);
+// };
 
 module.exports.addSignature = (firstName, lastName, signature) => {
     //$1 makes the query safer
@@ -18,4 +18,10 @@ module.exports.addSignature = (firstName, lastName, signature) => {
     //params is always an array
     let params = [firstName, lastName, signature];
     return db.query(q, params);
+};
+
+module.exports.getSigners = function () {
+    // let q = "SELECT COUNT(*) FROM signatures";
+    let q = "SELECT * FROM signatures";
+    return db.query(q);
 };
