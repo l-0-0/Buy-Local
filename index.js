@@ -12,14 +12,14 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static("public"));
 
-app.get("/", (req, res) => {
+app.get("/petition", (req, res) => {
     //go to the petition and talk to the db and then
     if (req.cookies.signed) {
         res.redirect("/signed");
     } else {
         res.render("petition", {
             layout: "main",
-            // results,
+            error: false,
         });
 
         db.getSignature()
@@ -37,26 +37,42 @@ app.get("/", (req, res) => {
 });
 
 // insert, delete or update a database is in post request
-app.post("/", (req, res) => {
+app.post("/petition", (req, res) => {
     // console.log(req.body.firstName, req.body.lastName, req.body.data);
     db.addSignature(req.body.firstName, req.body.lastName, req.body.data)
         .then(() => {
-            //any code writing here will run after getSignature has run
             res.render("thankYou", {
                 layout: "main",
             });
             res.cookie("signed", true);
         })
         .catch((err) => {
+            res.render("petition", {
+                layout: "main",
+                error: true,
+            });
             console.log("err in POST", err);
         });
     // console.log("req.cookies:", req.cookies);
 });
+app.get("/thanks", (req, res) => {
+    if (!req.cookies.signed) {
+        res.redirect("/petition");
+    } else {
+        res.render("thankYou", {
+            layout: "main",
+        });
+    }
+});
 
 app.get("/signed", (req, res) => {
-    res.render("signed", {
-        layout: "main",
-    });
+    if (!req.cookies.signed) {
+        res.redirect("/petition");
+    } else {
+        res.render("signed", {
+            layout: "main",
+        });
+    }
 });
 
 app.listen(8080, () => {
