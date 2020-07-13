@@ -33,7 +33,7 @@ signature.on("mouseup", (e) => {
 submit.on("click", (e) => {
     // const dataUrl = signature[0].toDataURL();
     // console.log(dataUrl);
-    const dataUrl = signature[0].toDataURL("image/jpg", 0.5);
+    const dataUrl = signature[0].toDataURL("image/png", 0.5);
     console.log(dataUrl);
     return $("#dataField").val(dataUrl);
 });

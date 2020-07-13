@@ -18,6 +18,10 @@ module.exports.getSigners = function () {
 
     return db.query(q);
 };
+module.exports.getSignersName = function () {
+    let q = "SELECT first, last FROM signatures";
+
+    return db.query(q);
+};
 
 //    RETURNING id
-// SELECT first, last FROM ....

@@ -1,5 +1,6 @@
 const express = require("express");
 const db = require("./db");
+const csurf = require("csurf");
 
 const app = express();
 
@@ -21,13 +22,23 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static("public"));
 
+//it prevents of clickjacking
+// app.use(function (req, res, next) {
+//     res.setHeader("x-frame-options", "deny");
+//     res.locals.csrfToken = req.csrfToken();
+//     next();
+// });
+
+//it has to be after cookie session and urlencoded
+// app.use(csurf());
+
 app.get("/", (req, res) => {
     res.redirect("/petition");
 });
 
 app.get("/petition", (req, res) => {
     if (req.session.signed === "done") {
-        res.redirect("/petition/signed");
+        res.redirect("/petition/thanks");
     } else {
         res.render("petition", {
             layout: "main",
@@ -76,9 +87,24 @@ app.get("/petition/signed", (req, res) => {
     if (req.session.signed !== "done") {
         res.redirect("/petition");
     } else {
-        res.render("signed", {
-            layout: "main",
-        });
+        db.getSignersName()
+            .then((results) => {
+                let signersName = [];
+                for (let i = 0; i < results.rows.length; i++) {
+                    // console.log(results.rows[i].first);
+                    signersName.push(
+                        `${results.rows[i].first} ${results.rows[i].last}`
+                    );
+                }
+                // console.log(signersName);
+                res.render("signed", {
+                    layout: "main",
+                    signersName,
+                });
+            })
+            .catch((err) => {
+                console.log("err in GET", err);
+            });
     }
 });
 
