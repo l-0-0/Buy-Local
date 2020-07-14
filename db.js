@@ -6,7 +6,8 @@ const db = spicedPg("postgres:postgres:Hoda@localhost:5432/petition");
 module.exports.addSignature = (firstName, lastName, signature) => {
     //$1 makes the query safer
     let q =
-        "INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3)";
+        "INSERT INTO signatures (first, last, signature) VALUES ($1, $2, $3) RETURNING id";
+
     // "params" is sth you only have to do if the query takes arguments
     //params is always an array
     let params = [firstName, lastName, signature];
@@ -24,4 +25,8 @@ module.exports.getSignersName = function () {
     return db.query(q);
 };
 
-//    RETURNING id
+module.exports.sigImage = function (id) {
+    let q = "SELECT signature FROM signatures WHERE id = $1";
+    let params = [id];
+    return db.query(q, params);
+};

@@ -1,0 +1,13 @@
+{{#if error}}
+<h3>Something went wrong. Please register again!</h3>
+{{/if}}
+
+<h1>Please log in.</h1>
+
+ <form method="POST">
+            {{!-- <input type="hidden" name="_csrf" value={{csrfToken}} /> --}}
+            <input type="text" name="email" placeholder="Email Address" />
+            <input type="password" name="password" placeholder="Password" />
+           
+            <button>Log In</button>
+        </form>

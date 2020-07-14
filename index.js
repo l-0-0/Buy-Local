@@ -1,6 +1,7 @@
 const express = require("express");
 const db = require("./db");
 const csurf = require("csurf");
+const { hash, compare } = require("./bc");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(
 );
 
 const hb = require("express-handlebars");
+const { request } = require("express");
 app.engine("handlebars", hb());
 app.set("view engine", "handlebars");
 
@@ -51,8 +53,10 @@ app.get("/petition", (req, res) => {
 app.post("/petition", (req, res) => {
     // console.log(req.body.firstName, req.body.lastName, req.body.data);
     db.addSignature(req.body.firstName, req.body.lastName, req.body.data)
-        .then(() => {
+        .then((results) => {
             req.session.signed = "done";
+            req.session.sigId = results.rows[0].id;
+            // console.log(results.rows[0].id);
             res.redirect("/petition/thanks");
         })
         .catch((err) => {
@@ -72,9 +76,15 @@ app.get("/petition/thanks", (req, res) => {
             .then((results) => {
                 // console.log("results.row", results.rows[0].count);
                 let numberofSignatures = results.rows[0].count;
-                res.render("thankYou", {
-                    layout: "main",
-                    numberofSignatures,
+                db.sigImage(req.session.sigId).then((results) => {
+                    let signatureUrl = results.rows[0].signature;
+                    // console.log(signatureUrl);
+
+                    res.render("thankYou", {
+                        layout: "main",
+                        numberofSignatures,
+                        signatureUrl,
+                    });
                 });
             })
             .catch((err) => {
@@ -105,6 +115,17 @@ app.get("/petition/signed", (req, res) => {
             .catch((err) => {
                 console.log("err in GET", err);
             });
+    }
+});
+
+app.get("/register", (req, res) => {
+    if (req.session.signed === "done") {
+        res.redirect("/petition/thanks");
+    } else {
+        res.render("registration", {
+            layout: "main",
+            error: false,
+        });
     }
 });
 
