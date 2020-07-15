@@ -52,7 +52,7 @@ app.get("/petition", (req, res) => {
 // insert, delete or update a database is in post request
 app.post("/petition", (req, res) => {
     // console.log(req.body.firstName, req.body.lastName, req.body.data);
-    db.addSignature(req.body.firstName, req.body.lastName, req.body.data)
+    db.addSignature(req.session.registered, req.body.data)
         .then((results) => {
             req.session.signed = "done";
             req.session.sigId = results.rows[0].id;
@@ -119,14 +119,72 @@ app.get("/petition/signed", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-    if (req.session.signed === "done") {
-        res.redirect("/petition/thanks");
-    } else {
-        res.render("registration", {
-            layout: "main",
-            error: false,
+    res.render("registration", {
+        layout: "main",
+        error: false,
+    });
+});
+
+app.post("/register", (req, res) => {
+    console.log(req.body.password);
+    hash(req.body.password)
+        .then((hashedPw) => {
+            db.register(
+                req.body.firstName,
+                req.body.lastName,
+                req.body.email,
+                hashedPw
+            ).then((results) => {
+                // console.log("hashed user password:", hashedPw);
+                req.session.registered = results.rows[0].id;
+                res.redirect("/petition");
+            });
+        })
+        .catch((err) => {
+            console.log("error in hash in POST register", err);
+            res.render("registration", {
+                layout: "main",
+                error: true,
+            });
         });
-    }
+});
+
+app.get("/login", (req, res) => {
+    res.render("login", {
+        layout: "main",
+        error: false,
+    });
+});
+
+app.post("/login", (req, res) => {
+    db.getPassword(req.body.email).then((results) => {
+        // console.log(req.body.email, results.rows[0].password);
+        if (!results.rows[0]) {
+            res.render("login", {
+                layout: "main",
+                error: true,
+            });
+        } else {
+            // console.log(req.body.password, results.rows[0].password);
+            compare(req.body.password, results.rows[0].password).then(
+                (matchValue) => {
+                    console.log(
+                        "does the user password match our hash in the database?",
+                        matchValue
+                    );
+                    if (matchValue) {
+                        req.session.isLoged = results.rows[0].id;
+                        res.redirect("/petition");
+                    } else {
+                        res.render("login", {
+                            layout: "main",
+                            error: true,
+                        });
+                    }
+                }
+            );
+        }
+    });
 });
 
 app.listen(8080, () => {
