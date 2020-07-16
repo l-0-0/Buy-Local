@@ -1,7 +1,9 @@
 //every database query is live in this file.
 
 const spicedPg = require("spiced-pg");
-const db = spicedPg("postgres:postgres:Hoda@localhost:5432/petition");
+const db = spicedPg(
+    process.env.DATABASE_URL || "postgres:postgres:Hoda@localhost:5432/petition"
+);
 
 module.exports.addSignature = (userId, signature) => {
     //$1 makes the query safer
@@ -20,7 +22,8 @@ module.exports.getSigners = function () {
     return db.query(q);
 };
 module.exports.getSignersName = function () {
-    let q = "SELECT first, last FROM signatures";
+    let q =
+        "SELECT first, last FROM users JOIN signatures ON users.id = signatures.user_id";
 
     return db.query(q);
 };
@@ -41,5 +44,12 @@ module.exports.register = function (firstName, lastName, email, password) {
 module.exports.getPassword = function (email) {
     let q = "SELECT * FROM users WHERE email = $1";
     let params = [email];
+    return db.query(q, params);
+};
+
+module.exports.addProfile = function (age, city, homepage) {
+    let q =
+        "INSERT INTO user_profiles (age, city, homepage) VALUES ($1, $2, $3) RETURNING id";
+    let params = [age, city, homepage];
     return db.query(q, params);
 };

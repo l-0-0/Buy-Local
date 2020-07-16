@@ -106,7 +106,7 @@ app.get("/petition/signed", (req, res) => {
                         `${results.rows[i].first} ${results.rows[i].last}`
                     );
                 }
-                // console.log(signersName);
+                // console.log(signersName, results.rows);
                 res.render("signed", {
                     layout: "main",
                     signersName,
@@ -126,7 +126,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-    console.log(req.body.password);
+    // console.log(req.body.password);
     hash(req.body.password)
         .then((hashedPw) => {
             db.register(
@@ -137,7 +137,7 @@ app.post("/register", (req, res) => {
             ).then((results) => {
                 // console.log("hashed user password:", hashedPw);
                 req.session.registered = results.rows[0].id;
-                res.redirect("/petition");
+                res.redirect("/profile");
             });
         })
         .catch((err) => {
@@ -187,6 +187,24 @@ app.post("/login", (req, res) => {
     });
 });
 
-app.listen(8080, () => {
+app.get("/profile", (req, res) => {
+    res.render("profile", {
+        layout: "main",
+    });
+});
+
+app.post("/profile", (req, res) => {
+    // console.log(req.body.age, req.body.city, req.body.homepage);
+    if (req.body.homepage.startsWith("https://", "http://", "//")) {
+        db.addProfile(
+            req.body.age,
+            req.body.city,
+            req.body.homepage
+        ).then((results) => {});
+    } else {
+    }
+});
+
+app.listen(process.env.PORT || 8080, () => {
     console.log("server is listening");
 });

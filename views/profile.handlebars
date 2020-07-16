@@ -1,0 +1,16 @@
+{{!-- {{#if error}}
+<h3>Something went wrong. Please register again!</h3>
+{{/if}} --}}
+
+<h1>Do you trust us to give more inforamtion about yourself?</h1>
+<h2>It's obviously optional. We understand your concerns!</h2>
+
+ <form method="POST">
+            {{!-- <input type="hidden" name="_csrf" value={{csrfToken}} /> --}}
+            <input type="number" name="age" placeholder="Age" />
+            <input type="text" name="city" placeholder="City" />
+            <input type="url" name="homepage" placeholder="Home Page" />
+          
+           
+            <button>Continue</button>
+        </form>
