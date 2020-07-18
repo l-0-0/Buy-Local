@@ -69,15 +69,29 @@ module.exports.getProfileInfo = function (userId) {
     return db.query(q, params);
 };
 
-module.exports.editProfileInfo = function (
+module.exports.updateProfileInfo = function (
     userId,
     newFirst,
     newLast,
-    newEmail,
-    newPass
+    newEmail
+    // newPass
 ) {
+    let q = "UPDATE users SET first=$2, last=$3, email=$4 WHERE id = $1";
+    // "UPDATE users SET first=$2, last=$3, email=$4, password=$5 WHERE id = $1";
+    let params = [userId, newFirst, newLast, newEmail];
+    // let params = [userId, newFirst, newLast, newEmail, newPass];
+    return db.query(q, params);
+};
+
+module.exports.unchangedPassword = function (userId) {
+    let q = "SELECT password FROM users WHERE id = $1";
+    let params = [userId];
+    return db.query(q, params);
+};
+
+module.exports.upsertProfileInfo = function (userId, newAge, newCity, newUrl) {
     let q =
-        "UPDATE users SET first=$2, last=$3, email=$4, password=$5 WHERE id = $1";
-    let params = [userId, newFirst, newLast, newEmail, newPass];
+        "INSERT INTO user_profiles (user_id, age, city ,url) VALUES ($1, $2, $3, $4) ON CONFLICT (user_id) DO UPDATE SET age=$2, city=$3 ,url=$4";
+    let params = [userId, newAge, newCity, newUrl];
     return db.query(q, params);
 };
