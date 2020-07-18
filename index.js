@@ -99,14 +99,9 @@ app.get("/petition/signed", (req, res) => {
     } else {
         db.getSignersName()
             .then((results) => {
-                let signersName = [];
-                for (let i = 0; i < results.rows.length; i++) {
-                    // console.log(results.rows[i].first);
-                    signersName.push(
-                        `${results.rows[i].first} ${results.rows[i].last}`
-                    );
-                }
-                // console.log(signersName, results.rows);
+                let signersName = results.rows;
+                console.log(signersName);
+
                 res.render("signed", {
                     layout: "main",
                     signersName,
@@ -116,6 +111,19 @@ app.get("/petition/signed", (req, res) => {
                 console.log("err in GET", err);
             });
     }
+});
+
+app.get("/petition/signed/:city", (req, res) => {
+    let city = req.params.city;
+    db.getSignersCity(city).then((results) => {
+        // console.log(results.rows[0].city);
+        let signersName = results.rows;
+        res.render("signed", {
+            layout: "main",
+            signersName,
+            city,
+        });
+    });
 });
 
 app.get("/register", (req, res) => {
@@ -158,7 +166,7 @@ app.get("/login", (req, res) => {
 
 app.post("/login", (req, res) => {
     db.getPassword(req.body.email).then((results) => {
-        // console.log(req.body.email, results.rows[0].password);
+        console.log(req.body.email, results.rows[0].password);
         if (!results.rows[0]) {
             res.render("login", {
                 layout: "main",
@@ -194,14 +202,33 @@ app.get("/profile", (req, res) => {
 });
 
 app.post("/profile", (req, res) => {
-    // console.log(req.body.age, req.body.city, req.body.homepage);
-    if (req.body.homepage.startsWith("https://", "http://", "//")) {
+    // console.log("cookies:", req.session);
+    if (!req.body.age && !req.body.city && !req.body.url) {
+        res.redirect("/petition");
+    } else {
+        if (!req.body.url.startsWith("https://", "http://", "//")) {
+            // console.log(req.body.age, req.body.city, req.body.url);
+            req.body.url = "http://" + req.body.url;
+        }
+
         db.addProfile(
             req.body.age,
             req.body.city,
-            req.body.homepage
-        ).then((results) => {});
-    } else {
+            req.body.url,
+            req.session.registered
+        )
+            .then(() => {
+                res.redirect("/petition");
+
+                // console.log("added");
+            })
+            .catch((err) => {
+                console.log("error in hash in POST profile", err);
+                res.render("profile", {
+                    layout: "main",
+                    error: true,
+                });
+            });
     }
 });
 

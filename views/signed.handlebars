@@ -1,14 +1,30 @@
-<div>
-    <h1>We all signed this petiotion:</h1>
-</div>
+{{#if city}}
 
-<div>
-    
+ <h1>We all in {{city}} signed this petiotion:</h1>
+
+ {{else}}
+
+    <h1>We all signed this petiotion:</h1>
+
+{{/if}}
+
         {{#signersName}}
+
         <p>
-            {{.}}
+            {{#if url}}
+<a href="{{url}}">{{first}} {{last}}</a>
+{{else}}
+{{first}} {{last}}
+{{/if}} 
+{{#if age}}
+, {{age}}
+{{/if}} 
+
+    {{#if city}}
+
+           , <a href = "/petition/signed/{{city}}">{{city}}</a>
+            {{/if}}      
         </p>
-    
+        
     {{/signersName}}
-      
-</div>
+
