@@ -52,7 +52,7 @@ app.get("/petition", (req, res) => {
 // insert, delete or update a database is in post request
 app.post("/petition", (req, res) => {
     // console.log(req.body.firstName, req.body.lastName, req.body.data);
-    db.addSignature(req.session.registered, req.body.data)
+    db.addSignature(req.session.userId, req.body.data)
         .then((results) => {
             req.session.signed = "done";
             req.session.sigId = results.rows[0].id;
@@ -100,7 +100,7 @@ app.get("/petition/signed", (req, res) => {
         db.getSignersName()
             .then((results) => {
                 let signersName = results.rows;
-                console.log(signersName);
+                // console.log(signersName);
 
                 res.render("signed", {
                     layout: "main",
@@ -144,7 +144,7 @@ app.post("/register", (req, res) => {
                 hashedPw
             ).then((results) => {
                 // console.log("hashed user password:", hashedPw);
-                req.session.registered = results.rows[0].id;
+                req.session.userId = results.rows[0].id;
                 res.redirect("/profile");
             });
         })
@@ -181,7 +181,7 @@ app.post("/login", (req, res) => {
                         matchValue
                     );
                     if (matchValue) {
-                        req.session.isLoged = results.rows[0].id;
+                        req.session.userId = results.rows[0].id;
                         res.redirect("/petition");
                     } else {
                         res.render("login", {
@@ -206,16 +206,16 @@ app.post("/profile", (req, res) => {
     if (!req.body.age && !req.body.city && !req.body.url) {
         res.redirect("/petition");
     } else {
-        if (!req.body.url.startsWith("https://", "http://", "//")) {
+        if (!req.body.url.startsWith("https://", "http://", "//", "www.")) {
             // console.log(req.body.age, req.body.city, req.body.url);
-            req.body.url = "http://" + req.body.url;
+            req.body.url = "";
         }
 
         db.addProfile(
             req.body.age,
             req.body.city,
             req.body.url,
-            req.session.registered
+            req.session.userId
         )
             .then(() => {
                 res.redirect("/petition");
@@ -225,6 +225,50 @@ app.post("/profile", (req, res) => {
             .catch((err) => {
                 console.log("error in hash in POST profile", err);
                 res.render("profile", {
+                    layout: "main",
+                    error: true,
+                });
+            });
+    }
+});
+
+app.get("/profile/edit", (req, res) => {
+    db.getProfileInfo(req.session.userId)
+        .then((results) => {
+            let profile = results.rows[0];
+            res.render("editprofile", {
+                layout: "main",
+                profile,
+            });
+        })
+        .catch((err) => {
+            console.log("error in hash in editing the profile", err);
+            res.render("editprofile", {
+                layout: "main",
+                error: true,
+            });
+        });
+});
+
+app.post("/profile/edit", (req, res) => {
+    if (req.body.password) {
+        // console.log(req.body.password);
+        hash(req.body.password)
+            .then((hashedPw) => {
+                db.editProfileInfo(
+                    req.session.userId,
+                    req.body.firstName,
+                    req.body.lastName,
+                    req.body.email,
+                    hashedPw
+                ).then((results) => {
+                    // console.log("hashed user password:", hashedPw);
+                    res.redirect("/profile/edit");
+                });
+            })
+            .catch((err) => {
+                console.log("error in hash in POST edit profle", err);
+                res.render("editprofile", {
                     layout: "main",
                     error: true,
                 });

@@ -41,9 +41,6 @@ module.exports.register = function (firstName, lastName, email, password) {
     return db.query(q, params);
 };
 
-//Change the SELECT that gets user id and password by email address
-//to join the signatures table and get the signature id as well
-
 module.exports.getPassword = function (email) {
     let q =
         "SELECT users.password, users.id AS usersId, signatures.id AS signaturesId FROM users LEFT JOIN signatures ON users.id = signatures.user_id WHERE users.email = $1";
@@ -62,5 +59,25 @@ module.exports.getSignersCity = function (city) {
     let q =
         "SELECT first, last, age, city, url FROM users RIGHT JOIN signatures ON users.id = signatures.user_id LEFT JOIN user_profiles ON users.id = user_profiles.user_id WHERE LOWER(city) = LOWER($1) ";
     let params = [city];
+    return db.query(q, params);
+};
+
+module.exports.getProfileInfo = function (userId) {
+    let q =
+        "SELECT users.first, users.last, users.email, user_profiles.age, user_profiles.city, user_profiles.url FROM users LEFT JOIN user_profiles ON users.id = user_profiles.user_id WHERE users.id = $1 ";
+    let params = [userId];
+    return db.query(q, params);
+};
+
+module.exports.editProfileInfo = function (
+    userId,
+    newFirst,
+    newLast,
+    newEmail,
+    newPass
+) {
+    let q =
+        "UPDATE users SET first=$2, last=$3, email=$4, password=$5 WHERE id = $1";
+    let params = [userId, newFirst, newLast, newEmail, newPass];
     return db.query(q, params);
 };
