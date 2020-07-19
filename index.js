@@ -251,6 +251,20 @@ app.get("/profile/edit", (req, res) => {
 });
 
 app.post("/profile/edit", (req, res) => {
+    if (req.body.password) {
+        // console.log(req.body.password);
+        hash(req.body.password)
+            .then((hashedPw) => {
+                console.log("hashed user password:", hashedPw);
+                db.updatePassword(req.session.userId, hashedPw).then(() => {
+                    console.log("updated");
+                });
+            })
+            .catch((err) => {
+                console.log("error in hash in POST edit password", err);
+            });
+    }
+
     Promise.all([
         db.updateProfileInfo(
             req.session.userId,
@@ -266,28 +280,9 @@ app.post("/profile/edit", (req, res) => {
         ),
     ])
         .then((results) => {
-            if (req.body.password) {
-                // console.log(req.body.password);
-                hash(req.body.password)
-                    .then((hashedPw) => {
-                        console.log("hashed user password:", hashedPw);
-                        res.redirect("/profile/edit");
-                    })
-                    .catch((err) => {
-                        console.log("error in hash in POST edit profle", err);
-                        res.render("editprofile", {
-                            layout: "main",
-                            error: true,
-                        });
-                    });
-            } else {
-                db.unchangedPassword(req.session.userId).then((results) => {
-                    let password = results.rows[0].password;
-                    console.log(password);
-                    res.redirect("/profile/edit");
-                });
-            }
+            res.redirect("/profile/edit");
         })
+
         .catch((err) => {
             console.log("error in hash in POST edit profle", err);
             res.render("editprofile", {
@@ -296,53 +291,6 @@ app.post("/profile/edit", (req, res) => {
             });
         });
 });
-// app.post("/profile/edit", (req, res) => {
-//     if (req.body.password) {
-//         // console.log(req.body.password);
-//         hash(req.body.password)
-//             .then((hashedPw) => {
-//                 db.chan(
-//                     req.session.userId,
-//                     req.body.firstName,
-//                     req.body.lastName,
-//                     req.body.email,
-//                     hashedPw
-//                 ).then(() => {
-//                     console.log("hashed user password:", hashedPw);
-//                     res.redirect("/profile/edit");
-//                 });
-//             })
-//             .catch((err) => {
-//                 console.log("error in hash in POST edit profle", err);
-//                 res.render("editprofile", {
-//                     layout: "main",
-//                     error: true,
-//                 });
-//             });
-//     } else {
-//         db.unchangedPassword(req.session.userId)
-//             .then((results) => {
-//                 db.updateProfileInfo(
-//                     req.session.userId,
-//                     req.body.firstName,
-//                     req.body.lastName,
-//                     req.body.email,
-//                     results.rows[0].password
-//                 ).then(() => {
-//                     // console.log("hashed user password:", hashedPw);
-//                     console.log("password:", results.rows[0].password);
-//                     res.redirect("/profile/edit");
-//                 });
-//             })
-//             .catch((err) => {
-//                 console.log("error in hash in POST edit profle", err);
-//                 res.render("editprofile", {
-//                     layout: "main",
-//                     error: true,
-//                 });
-//             });
-//     }
-// });
 
 app.listen(process.env.PORT || 8080, () => {
     console.log("server is listening");

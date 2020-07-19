@@ -83,9 +83,9 @@ module.exports.updateProfileInfo = function (
     return db.query(q, params);
 };
 
-module.exports.unchangedPassword = function (userId) {
-    let q = "SELECT password FROM users WHERE id = $1";
-    let params = [userId];
+module.exports.updatePassword = function (userId, hashedPass) {
+    let q = "UPDATE users SET password=$2 WHERE id = $1";
+    let params = [userId, hashedPass];
     return db.query(q, params);
 };
 
