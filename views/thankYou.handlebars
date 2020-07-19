@@ -7,8 +7,8 @@
 
 <a href="/petition/signed">See all the like minded people in this planet!</a>
 
-  <form method="POST">
-      {{!-- <input type="hidden" name="_csrf" value="{{csrfToken}}"> --}}
+  <form action="/signature/delete" method="POST">
+      <input type="hidden" name="_csrf" value="{{csrfToken}}">
       <button>Delete Signature</button>
   </form>
 

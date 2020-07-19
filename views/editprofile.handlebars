@@ -5,7 +5,7 @@
  {{/if}}
 
  <form method="POST">
-            {{!-- <input type="hidden" name="_csrf" value={{csrfToken}} /> --}}
+            <input type="hidden" name="_csrf" value={{csrfToken}} />
             <input type="text" name="firstName" placeholder="First Name" value="{{profile.first}}"/>
             <input type="text" name="lastName" placeholder="Last Name" value="{{profile.last}}" />
             <input type="text" name="email" placeholder="Email Address" value="{{profile.email}}"/>
@@ -15,4 +15,5 @@
             <input type="url" name="url" placeholder="Home Page" value="{{profile.url}}" />
           
             <button>Update</button>
+            
         </form>

@@ -1,11 +1,10 @@
 const express = require("express");
 const db = require("./db");
+const cookieSession = require("cookie-session");
 const csurf = require("csurf");
 const { hash, compare } = require("./bc");
 
 const app = express();
-
-const cookieSession = require("cookie-session");
 
 app.use(
     cookieSession({
@@ -24,15 +23,15 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static("public"));
 
-//it prevents of clickjacking
-// app.use(function (req, res, next) {
-//     res.setHeader("x-frame-options", "deny");
-//     res.locals.csrfToken = req.csrfToken();
-//     next();
-// });
-
 //it has to be after cookie session and urlencoded
-// app.use(csurf());
+app.use(csurf());
+
+//it prevents of clickjacking
+app.use(function (req, res, next) {
+    res.setHeader("x-frame-options", "deny");
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 app.get("/", (req, res) => {
     res.redirect("/petition");
@@ -296,7 +295,7 @@ app.post("/profile/edit", (req, res) => {
         });
 });
 
-app.post("/petition/thanks", (req, res) => {
+app.post("/signature/delete", (req, res) => {
     db.deleteSig(req.session.userId)
         .then(() => {
             console.log("signature deleted");
