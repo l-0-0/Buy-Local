@@ -6,6 +6,13 @@ const { hash, compare } = require("./bc");
 
 const app = express();
 
+const {
+    isUserLoggedIn,
+    isUserSigned,
+    isUserNotSigned,
+    isUserNotLoggedIn,
+} = require("./middleware");
+
 app.use(
     cookieSession({
         secret: `I'm always angry.`,
@@ -33,23 +40,27 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get("/", (req, res) => {
-    res.redirect("/petition");
-});
-
-app.get("/petition", (req, res) => {
-    if (req.session.signed === "done") {
-        res.redirect("/petition/thanks");
+app.use((req, res, next) => {
+    if (!req.session.userId && req.url != "/login" && req.url != "/register") {
+        res.redirect("/register");
     } else {
-        res.render("petition", {
-            layout: "main",
-            error: false,
-        });
+        next();
     }
 });
 
+app.get("/", (req, res) => {
+    res.redirect("/login");
+});
+
+app.get("/petition", isUserSigned, (req, res) => {
+    res.render("petition", {
+        layout: "main",
+        error: false,
+    });
+});
+
 // insert, delete or update a database is in post request
-app.post("/petition", (req, res) => {
+app.post("/petition", isUserSigned, (req, res) => {
     // console.log(req.body.firstName, req.body.lastName, req.body.data);
     db.addSignature(req.session.userId, req.body.data)
         .then((results) => {
@@ -67,56 +78,49 @@ app.post("/petition", (req, res) => {
         });
     // console.log("req.cookies:", req.cookies);
 });
-app.get("/petition/thanks", (req, res) => {
-    if (req.session.signed !== "done") {
-        res.redirect("/petition");
-    } else {
-        db.getSigners()
-            .then((results) => {
-                // console.log("results.row", results.rows[0].count);
-                let numberofSignatures = results.rows[0].count;
-                db.sigImage(req.session.sigId)
-                    .then((results) => {
-                        let signatureUrl = results.rows[0].signature;
-                        // console.log(signatureUrl);
 
-                        res.render("thankYou", {
-                            layout: "main",
-                            numberofSignatures,
-                            signatureUrl,
-                        });
-                    })
-                    .catch((err) => {
-                        console.log("error in sigImage", err);
+app.get("/petition/thanks", isUserNotSigned, (req, res) => {
+    db.getSigners()
+        .then((results) => {
+            // console.log("results.row", results.rows[0].count);
+            let numberofSignatures = results.rows[0].count;
+            db.sigImage(req.session.sigId)
+                .then((results) => {
+                    let signatureUrl = results.rows[0].signature;
+                    // console.log(signatureUrl);
+
+                    res.render("thankYou", {
+                        layout: "main",
+                        numberofSignatures,
+                        signatureUrl,
                     });
-            })
-            .catch((err) => {
-                console.log("err in GET", err);
-            });
-    }
-});
-
-app.get("/petition/signed", (req, res) => {
-    if (req.session.signed !== "done") {
-        res.redirect("/petition");
-    } else {
-        db.getSignersName()
-            .then((results) => {
-                let signersName = results.rows;
-                // console.log(signersName);
-
-                res.render("signed", {
-                    layout: "main",
-                    signersName,
+                })
+                .catch((err) => {
+                    console.log("error in sigImage", err);
                 });
-            })
-            .catch((err) => {
-                console.log("err in GET", err);
-            });
-    }
+        })
+        .catch((err) => {
+            console.log("err in GET", err);
+        });
 });
 
-app.get("/petition/signed/:city", (req, res) => {
+app.get("/petition/signed", isUserNotSigned, (req, res) => {
+    db.getSignersName()
+        .then((results) => {
+            let signersName = results.rows;
+            // console.log(signersName);
+
+            res.render("signed", {
+                layout: "main",
+                signersName,
+            });
+        })
+        .catch((err) => {
+            console.log("err in GET", err);
+        });
+});
+
+app.get("/petition/signed/:city", isUserNotSigned, (req, res) => {
     let city = req.params.city;
     db.getSignersCity(city).then((results) => {
         // console.log(results.rows[0].city);
@@ -129,14 +133,14 @@ app.get("/petition/signed/:city", (req, res) => {
     });
 });
 
-app.get("/register", (req, res) => {
+app.get("/register", isUserLoggedIn, (req, res) => {
     res.render("registration", {
         layout: "main",
         error: false,
     });
 });
 
-app.post("/register", (req, res) => {
+app.post("/register", isUserLoggedIn, (req, res) => {
     // console.log(req.body.password);
     hash(req.body.password)
         .then((hashedPw) => {
@@ -160,16 +164,16 @@ app.post("/register", (req, res) => {
         });
 });
 
-app.get("/login", (req, res) => {
+app.get("/login", isUserLoggedIn, isUserSigned, (req, res) => {
     res.render("login", {
         layout: "main",
         error: false,
     });
 });
 
-app.post("/login", (req, res) => {
+app.post("/login", isUserLoggedIn, isUserSigned, (req, res) => {
     db.getPassword(req.body.email).then((results) => {
-        console.log(req.body.email, results.rows[0].password);
+        // console.log(req.body.email, results.rows[0].password);
         if (!results.rows[0]) {
             res.render("login", {
                 layout: "main",
@@ -305,6 +309,11 @@ app.post("/signature/delete", (req, res) => {
         .catch((err) => {
             console.log("error in deleting the signature", err);
         });
+});
+
+app.get("/logout", (req, res) => {
+    req.session = null;
+    res.redirect("/");
 });
 
 app.listen(process.env.PORT || 8080, () => {
