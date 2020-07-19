@@ -95,3 +95,9 @@ module.exports.upsertProfileInfo = function (userId, newAge, newCity, newUrl) {
     let params = [userId, newAge, newCity, newUrl];
     return db.query(q, params);
 };
+
+module.exports.deleteSig = function (userId) {
+    let q = "DELETE FROM signatures WHERE user_id=$1 ";
+    let params = [userId];
+    return db.query(q, params);
+};

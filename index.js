@@ -76,16 +76,20 @@ app.get("/petition/thanks", (req, res) => {
             .then((results) => {
                 // console.log("results.row", results.rows[0].count);
                 let numberofSignatures = results.rows[0].count;
-                db.sigImage(req.session.sigId).then((results) => {
-                    let signatureUrl = results.rows[0].signature;
-                    // console.log(signatureUrl);
+                db.sigImage(req.session.sigId)
+                    .then((results) => {
+                        let signatureUrl = results.rows[0].signature;
+                        // console.log(signatureUrl);
 
-                    res.render("thankYou", {
-                        layout: "main",
-                        numberofSignatures,
-                        signatureUrl,
+                        res.render("thankYou", {
+                            layout: "main",
+                            numberofSignatures,
+                            signatureUrl,
+                        });
+                    })
+                    .catch((err) => {
+                        console.log("error in sigImage", err);
                     });
-                });
             })
             .catch((err) => {
                 console.log("err in GET", err);
@@ -289,6 +293,18 @@ app.post("/profile/edit", (req, res) => {
                 layout: "main",
                 error: true,
             });
+        });
+});
+
+app.post("/petition/thanks", (req, res) => {
+    db.deleteSig(req.session.userId)
+        .then(() => {
+            console.log("signature deleted");
+            req.session.signed = "";
+            res.redirect("/petition");
+        })
+        .catch((err) => {
+            console.log("error in deleting the signature", err);
         });
 });
 
