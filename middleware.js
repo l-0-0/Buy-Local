@@ -8,7 +8,7 @@ module.exports.isUserLoggedIn = function isUserLoggedIn(req, res, next) {
 
 module.exports.isUserSigned = function isUserSigned(req, res, next) {
     //has the user signed the petition?
-    if (req.session.sigId) {
+    if (req.session.signed) {
         res.redirect("/petition/thanks");
     } else {
         next();

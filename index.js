@@ -6,11 +6,12 @@ const { hash, compare } = require("./bc");
 
 const app = express();
 
+module.exports.app = app;
+
 const {
     isUserLoggedIn,
     isUserSigned,
     isUserNotSigned,
-    isUserNotLoggedIn,
 } = require("./middleware");
 
 app.use(
@@ -49,7 +50,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-    res.redirect("/login");
+    res.redirect("/register");
 });
 
 app.get("/petition", isUserSigned, (req, res) => {
@@ -316,6 +317,8 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-app.listen(process.env.PORT || 8080, () => {
-    console.log("server is listening");
-});
+if (require.main === module) {
+    app.listen(process.env.PORT || 8080, () => {
+        console.log("server is listening");
+    });
+}
