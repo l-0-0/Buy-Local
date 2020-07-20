@@ -142,7 +142,6 @@ app.get("/register", isUserLoggedIn, (req, res) => {
 });
 
 app.post("/register", isUserLoggedIn, (req, res) => {
-    // console.log(req.body.password);
     hash(req.body.password)
         .then((hashedPw) => {
             db.register(
@@ -150,14 +149,22 @@ app.post("/register", isUserLoggedIn, (req, res) => {
                 req.body.lastName,
                 req.body.email,
                 hashedPw
-            ).then((results) => {
-                // console.log("hashed user password:", hashedPw);
-                req.session.userId = results.rows[0].id;
-                res.redirect("/profile");
-            });
+            )
+                .then((results) => {
+                    // console.log("hashed user password:", hashedPw);
+                    req.session.userId = results.rows[0].id;
+                    res.redirect("/profile");
+                })
+                .catch((err) => {
+                    console.log("error in hash in POST register", err);
+                    res.render("registration", {
+                        layout: "main",
+                        error: true,
+                    });
+                });
         })
         .catch((err) => {
-            console.log("error in hash in POST register", err);
+            console.log("error in send the info in POST register", err);
             res.render("registration", {
                 layout: "main",
                 error: true,
