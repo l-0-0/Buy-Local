@@ -1,11 +1,14 @@
-<div>Thanks for your support</div>
+<h1>Thank you for your signature!</h1>
+<h2>The world needs more people like you!</h2>
 
 <img src={{signatureUrl}} alt="signature">
 
 
-<p>until now {{numberofSignatures}} people signed this beautiful petition.</p>
 
-<a href="/petition/signed">See all the like minded people in this planet!</a>
+
+<a href="/petition/signed">See all the {{numberofSignatures}} like minded people who signed this petition.</a>
+
+<a href="/profile/edit">Edit your profile</a>
 
   <form action="/signature/delete" method="POST">
       <input type="hidden" name="_csrf" value="{{csrfToken}}">

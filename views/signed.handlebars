@@ -1,3 +1,7 @@
+{{#if error}}
+<h3>Something went wrong. Please try again!</h3>
+{{/if}}
+
 {{#if city}}
 
  <h1>We all in {{city}} signed this petiotion:</h1>
@@ -7,6 +11,8 @@
     <h1>We all signed this petiotion:</h1>
 
 {{/if}}
+
+
 
         {{#signersName}}
 

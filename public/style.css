@@ -1,25 +1,28 @@
 * {
-    background-color: aqua;
     font-size: large;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: ember;
     margin: 0;
 }
 
 .container {
     display: grid;
-    min-height: 100vh;
+    height: 100vh;
     grid-template-rows: 100px 1fr 40px;
     height: 100vh;
     width: 100vw;
+    background-color: #dedee6;
 }
 
-/* header {
-    display: flex;
-} */
+header {
+    background-color: #131921;
+}
 
 .logo {
     /* width: 100px; */
     height: 70px;
+    width: 150px;
+    border-radius: 5px;
+    margin-top: 20px;
 }
 ul {
     list-style-type: none;
@@ -35,10 +38,21 @@ li {
 
 li a {
     /* display: flex; */
-    color: black;
+    color: white;
     text-align: center;
     padding: 14px 16px;
 }
 li a:hover {
-    background-color: white;
+    background-color: #fe9800;
+}
+
+footer {
+    background-color: #37475a;
+    color: white;
+}
+
+.navbar {
+    width: 300px;
+    float: right;
+    margin-top: 30px;
 }

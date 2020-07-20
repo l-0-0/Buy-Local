@@ -43,7 +43,7 @@ module.exports.register = function (firstName, lastName, email, password) {
 
 module.exports.getPassword = function (email) {
     let q =
-        "SELECT users.password, users.id AS usersId, signatures.id AS signaturesId FROM users LEFT JOIN signatures ON users.id = signatures.user_id WHERE users.email = $1";
+        'SELECT users.password, users.id AS "usersId", signatures.id AS "signaturesId" FROM users LEFT JOIN signatures ON users.id = signatures.user_id WHERE users.email = $1';
     let params = [email];
     return db.query(q, params);
 };

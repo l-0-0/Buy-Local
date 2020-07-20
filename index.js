@@ -123,15 +123,25 @@ app.get("/petition/signed", isUserNotSigned, (req, res) => {
 
 app.get("/petition/signed/:city", isUserNotSigned, (req, res) => {
     let city = req.params.city;
-    db.getSignersCity(city).then((results) => {
-        // console.log(results.rows[0].city);
-        let signersName = results.rows;
-        res.render("signed", {
-            layout: "main",
-            signersName,
-            city,
+    db.getSignersCity(city)
+        .then((results) => {
+            // console.log(results.rows[0].city);
+            let signersName = results.rows;
+            res.render("signed", {
+                layout: "main",
+                signersName,
+                city,
+            });
+        })
+        .catch((err) => {
+            console.log("err in cities page", err);
+            res.render("signed", {
+                layout: "main",
+                signersName,
+                city,
+                error: true,
+            });
         });
-    });
 });
 
 app.get("/register", isUserLoggedIn, (req, res) => {
@@ -172,42 +182,59 @@ app.post("/register", isUserLoggedIn, (req, res) => {
         });
 });
 
-app.get("/login", isUserLoggedIn, isUserSigned, (req, res) => {
+app.get("/login", isUserLoggedIn, (req, res) => {
     res.render("login", {
         layout: "main",
         error: false,
     });
 });
 
-app.post("/login", isUserLoggedIn, isUserSigned, (req, res) => {
-    db.getPassword(req.body.email).then((results) => {
-        // console.log(req.body.email, results.rows[0].password);
-        if (!results.rows[0]) {
-            res.render("login", {
-                layout: "main",
-                error: true,
-            });
-        } else {
-            // console.log(req.body.password, results.rows[0].password);
-            compare(req.body.password, results.rows[0].password).then(
-                (matchValue) => {
-                    console.log(
-                        "does the user password match our hash in the database?",
-                        matchValue
-                    );
-                    if (matchValue) {
-                        req.session.userId = results.rows[0].id;
-                        res.redirect("/petition");
-                    } else {
+app.post("/login", isUserLoggedIn, (req, res) => {
+    db.getPassword(req.body.email)
+        .then((results) => {
+            // console.log(req.body.email, results.rows[0].password);
+            if (!results.rows[0]) {
+                res.render("login", {
+                    layout: "main",
+                    error: true,
+                });
+            } else {
+                // console.log(req.body.password, results.rows[0].password);
+                compare(req.body.password, results.rows[0].password)
+                    .then((matchValue) => {
+                        console.log(
+                            "does the user password match our hash in the database?",
+                            matchValue
+                        );
+                        if (matchValue) {
+                            req.session.userId = results.rows[0].usersId;
+                            req.session.sigId = results.rows[0].signaturesId;
+                            req.session.signed = results.rows[0].signaturesId;
+                            console.log(req.session, results.rows[0]);
+                            res.redirect("/petition");
+                        } else {
+                            res.render("login", {
+                                layout: "main",
+                                error: true,
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        console.log("error in maching the password", err);
                         res.render("login", {
                             layout: "main",
                             error: true,
                         });
-                    }
-                }
-            );
-        }
-    });
+                    });
+            }
+        })
+        .catch((err) => {
+            console.log("error in getting the email and password", err);
+            res.render("login", {
+                layout: "main",
+                error: true,
+            });
+        });
 });
 
 app.get("/profile", (req, res) => {
@@ -295,7 +322,22 @@ app.post("/profile/edit", (req, res) => {
         ),
     ])
         .then((results) => {
-            res.redirect("/profile/edit");
+            let city = req.body.city;
+            let first = req.body.firstName;
+            let last = req.body.lastName;
+            let email = req.body.email;
+            let age = req.body.age;
+            let url = req.body.url;
+
+            res.render("afterEditingProfile", {
+                layout: "main",
+                first,
+                last,
+                age,
+                city,
+                email,
+                url,
+            });
         })
 
         .catch((err) => {
