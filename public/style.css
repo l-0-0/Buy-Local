@@ -227,3 +227,83 @@ a {
     width: 100%;
     height: 400px;
 }
+
+/* @media screen and (min-width: 320px) and (max-width: 800px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+
+        height: 100vh;
+        width: 100% !important;
+        margin-left: 0% !important;
+    }
+    main {
+        display: flex;
+
+        background-color: #dedee6;
+    }
+
+    #img-text {
+        margin-left: 1rem;
+        font-size: 1rem;
+        text-align: start;
+        line-height: 20px;
+        margin-top: 1rem;
+        margin-right: 10px;
+        margin-bottom: 2rem;
+    }
+
+    #img-text h3 {
+        margin-top: 25px;
+    }
+    footer {
+        background-color: #37475a;
+        color: white;
+        padding-top: 5px;
+        text-align: center;
+        font-size: 15px;
+        font-family: sans-serif;
+    }
+    .navbar {
+        width: 700px;
+        float: right;
+        margin-top: 20px;
+        padding-right: 10px;
+        font-family: sans-serif;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+    .navbar li a {
+        color: white;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .signature {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        padding-top: 10%;
+
+        align-items: center;
+    }
+
+    .signature h1 {
+        margin: 20px;
+        text-align: center;
+    }
+
+    .signature canvas {
+        align-self: center;
+        display: block;
+    }
+
+    .signature button {
+        height: 50px;
+        width: 200px;
+        background-color: #fe9800;
+        font-size: 20px;
+        margin-left: 30%;
+        margin-top: 30px;
+    }
+} */

@@ -1,15 +1,14 @@
 <div class="thanks-page">
 
 
-<h1>Thank you for supporting our campaign!</h1>
 
-<h2>Your profile has been updated:</h2>
-<h3> {{first}} {{last}} </h3>
-<h3> {{age}} </h3>
-<h3> <a href = "/petition/signed/{{city}}">{{city}}</a> </h3>
-<h3> {{email}} </h3>
+<h1>Your profile has been updated:</h1>
+<h3> Name: {{first}} {{last}} </h3>
+<h3> Age: {{age}} </h3>
+<h3> <a href = "/petition/signed/{{city}}">City: {{city}}</a> </h3>
+<h3> Email: {{email}} </h3>
  {{#if url}}
- <h3><a href="{{url}}">Home Page</a></h3>
+ <h3><a href="{{url}}">Home Page: {{url}}</a></h3>
 {{/if}}
 
 <h2>If you want to change your profile again, go <a href = "/profile/edit">here</a></h2>
