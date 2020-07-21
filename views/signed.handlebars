@@ -1,3 +1,16 @@
+<div class="b-img">
+<img src="/protest.jpg" alt="pic">
+<div id="img-text">
+    
+    <p>We all know that AMAZON SUCKS! </p>
+  <p>It destroys local businesses and </p>
+  <p>the working condition there is awful.</p>
+    <h3>So lets boycott amazon and support locals...</h3>
+</div>
+</div>
+
+<div class="register">
+
 {{#if error}}
 <h3>Something went wrong. Please try again!</h3>
 {{/if}}
@@ -16,7 +29,7 @@
 
         {{#signersName}}
 
-        <p>
+        <h2>
             {{#if url}}
 <a href="{{url}}">{{first}} {{last}}</a>
 {{else}}
@@ -28,9 +41,10 @@
 
     {{#if city}}
 
-           , <a href = "/petition/signed/{{city}}">{{city}}</a>
+            <a href = "/petition/signed/{{city}}">, {{city}}</a>
             {{/if}}      
-        </p>
+        </h2>
         
     {{/signersName}}
 
+</div>

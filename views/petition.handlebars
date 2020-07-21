@@ -1,12 +1,33 @@
-{{#if error}}
-<h3>Something went wrong. Please sign the petition again!</h3>
-{{/if}}
+<div class="b-img">
+<img src="/petition2.jpg" alt="pic">
+<div id="img-text">
+    <p>Amazon is everywhere, even this petition is dependent on it.</p>
+    <p>But we all know that AMAZON SUCKS! </p>
+  <p>It destroys local businesses and </p>
+  <p>the working condition there is awful.</p>
+    <h3>So lets boycott amazon and support locals...</h3>
+</div>
+</div>
+
+
+<div class="signature">
+
+    <h1>Please sign the petition!</h1>
+
+   {{#if error}}
+            <h3>Something went wrong. Please enter your inforamtion again!</h3>
+    {{/if}}
+
+
+
  
- <form method="POST">
+ <form class="canvas" method="POST">
             <input type="hidden" name="_csrf" value="{{csrfToken}}" />
             {{!-- <input type="text" name="firstName" placeholder="First Name" />
             <input type="text" name="lastName" placeholder="Last Name" /> --}}
-            <canvas id="sign" height="150" width="200" style="border: 2px solid black;"></canvas>
+            <canvas id="sign"  height="200" width="500"></canvas>
             <input id="dataField" type="hidden" name="data" value="">
             <button>Submit</button>
         </form>
+
+        </div>

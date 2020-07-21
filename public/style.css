@@ -1,6 +1,5 @@
 * {
-    font-size: large;
-    font-family: ember;
+    font-family: "Roboto", sans-serif;
     margin: 0;
 }
 
@@ -10,9 +9,12 @@
     grid-template-rows: 100px 1fr 40px;
     height: 100vh;
     width: 100vw;
+}
+main {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
     background-color: #dedee6;
 }
-
 header {
     background-color: #131921;
 }
@@ -23,36 +25,205 @@ header {
     width: 150px;
     border-radius: 5px;
     margin-top: 20px;
+    margin-left: 20px;
 }
-ul {
+.navbar ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
     overflow: hidden;
 }
 
-li {
+.navbar li {
     float: right;
     display: inline;
+    font-size: 20px;
+    height: 30px;
 }
 
-li a {
+.navbar li a {
     /* display: flex; */
     color: white;
     text-align: center;
-    padding: 14px 16px;
+    padding: 30px;
 }
-li a:hover {
+.navbar li a:hover {
     background-color: #fe9800;
 }
 
 footer {
     background-color: #37475a;
     color: white;
+    padding-top: 10px;
+    text-align: center;
+    font-size: 15px;
+    font-family: sans-serif;
 }
 
 .navbar {
-    width: 300px;
+    width: 700px;
     float: right;
     margin-top: 30px;
+    padding-right: 20px;
+    font-family: sans-serif;
+}
+
+.b-img {
+    background-color: #fe9800;
+    justify-self: stretch;
+    color: black;
+}
+
+.b-img img {
+    width: 100%;
+}
+
+#img-text {
+    margin-left: 3rem;
+    font-size: 2rem;
+    text-align: start;
+    line-height: 40px;
+    margin-top: 2rem;
+    margin-right: 10px;
+    margin-bottom: 2rem;
+}
+
+#img-text h3 {
+    margin-top: 25px;
+}
+
+.register {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding-top: 10%;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.register h1 {
+    margin: 20px;
+    text-align: center;
+}
+
+.register form input {
+    display: block;
+    margin: 20px;
+    height: 30px;
+    width: 200px;
+    font-size: 15px;
+    text-align: center;
+}
+.register form button {
+    /* display: block; */
+    margin: 20px;
+    height: 50px;
+    width: 200px;
+    background-color: #fe9800;
+    font-size: 20px;
+}
+
+.register p {
+    font-size: 20px;
+    margin-top: 20px;
+    /* padding-left: 12%;
+    padding-right: 4%; */
+    /* justify-self: center; */
+    /* align-items: center; */
+}
+
+.register h3 {
+    text-decoration: underline;
+    margin-top: 10px;
+}
+
+#sign {
+    border: 2px solid #37475a;
+}
+
+.signature {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding-top: 10%;
+    /* justify-content: center; */
+    align-items: center;
+}
+
+.signature h1 {
+    margin: 20px;
+    text-align: center;
+}
+
+.signature canvas {
+    align-self: center;
+    display: block;
+}
+
+.signature button {
+    height: 50px;
+    width: 200px;
+    background-color: #fe9800;
+    font-size: 20px;
+    margin-left: 30%;
+    margin-top: 30px;
+}
+
+.thanks-page img {
+    height: 200px;
+    width: 80%;
+    margin-top: 2rem;
+}
+
+.thanks-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.thanks-page h1 {
+    margin-bottom: 5rem;
+}
+
+.thanks-page h2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.thanks-page h3 {
+    margin-bottom: 10px;
+}
+
+.thanks-page button {
+    margin-top: 5rem;
+    width: 200px;
+    height: 70px;
+    border: 2px solid #37475a;
+    background-color: #fe9800;
+    font-size: 20px;
+}
+#sign {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    padding-top: 10%;
+
+    justify-content: space-between;
+}
+#sign img {
+    height: 400px;
+    width: 100%;
+}
+
+#sign h2 {
+    margin-bottom: 5rem;
+    text-align: center;
+}
+
+a {
+    color: #37475a;
+}
+
+.edit img {
+    width: 100%;
+    height: 400px;
 }
