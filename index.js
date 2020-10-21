@@ -62,12 +62,10 @@ app.get("/petition", isUserSigned, (req, res) => {
 
 // insert, delete or update a database is in post request
 app.post("/petition", isUserSigned, (req, res) => {
-    // console.log(req.body.firstName, req.body.lastName, req.body.data);
     db.addSignature(req.session.userId, req.body.data)
         .then((results) => {
             req.session.signed = "done";
             req.session.sigId = results.rows[0].id;
-            // console.log(results.rows[0].id);
             res.redirect("/petition/thanks");
         })
         .catch((err) => {
@@ -77,18 +75,15 @@ app.post("/petition", isUserSigned, (req, res) => {
             });
             console.log("err in POST", err);
         });
-    // console.log("req.cookies:", req.cookies);
 });
 
 app.get("/petition/thanks", isUserNotSigned, (req, res) => {
     db.getSigners()
         .then((results) => {
-            // console.log("results.row", results.rows[0].count);
             let numberofSignatures = results.rows[0].count;
             db.sigImage(req.session.sigId)
                 .then((results) => {
                     let signatureUrl = results.rows[0].signature;
-                    // console.log(signatureUrl);
 
                     res.render("thankYou", {
                         layout: "main",
@@ -109,7 +104,6 @@ app.get("/petition/signed", isUserNotSigned, (req, res) => {
     db.getSignersName()
         .then((results) => {
             let signersName = results.rows;
-            // console.log(signersName);
 
             res.render("signed", {
                 layout: "main",
@@ -125,7 +119,6 @@ app.get("/petition/signed/:city", isUserNotSigned, (req, res) => {
     let city = req.params.city;
     db.getSignersCity(city)
         .then((results) => {
-            // console.log(results.rows[0].city);
             let signersName = results.rows;
             res.render("signed", {
                 layout: "main",
@@ -161,7 +154,6 @@ app.post("/register", isUserLoggedIn, (req, res) => {
                 hashedPw
             )
                 .then((results) => {
-                    // console.log("hashed user password:", hashedPw);
                     req.session.userId = results.rows[0].id;
                     res.redirect("/profile");
                 })
@@ -192,14 +184,12 @@ app.get("/login", isUserLoggedIn, (req, res) => {
 app.post("/login", isUserLoggedIn, (req, res) => {
     db.getPassword(req.body.email)
         .then((results) => {
-            // console.log(req.body.email, results.rows[0].password);
             if (!results.rows[0]) {
                 res.render("login", {
                     layout: "main",
                     error: true,
                 });
             } else {
-                // console.log(req.body.password, results.rows[0].password);
                 compare(req.body.password, results.rows[0].password)
                     .then((matchValue) => {
                         console.log(
@@ -210,7 +200,6 @@ app.post("/login", isUserLoggedIn, (req, res) => {
                             req.session.userId = results.rows[0].usersId;
                             req.session.sigId = results.rows[0].signaturesId;
                             req.session.signed = results.rows[0].signaturesId;
-                            console.log(req.session, results.rows[0]);
                             res.redirect("/petition");
                         } else {
                             res.render("login", {
@@ -244,12 +233,10 @@ app.get("/profile", (req, res) => {
 });
 
 app.post("/profile", (req, res) => {
-    // console.log("cookies:", req.session);
     if (!req.body.age && !req.body.city && !req.body.url) {
         res.redirect("/petition");
     } else {
         if (!req.body.url.startsWith("https://", "http://", "//", "www.")) {
-            // console.log(req.body.age, req.body.city, req.body.url);
             req.body.url = "";
         }
 
@@ -261,8 +248,6 @@ app.post("/profile", (req, res) => {
         )
             .then(() => {
                 res.redirect("/petition");
-
-                // console.log("added");
             })
             .catch((err) => {
                 console.log("error in hash in POST profile", err);
@@ -294,13 +279,9 @@ app.get("/profile/edit", (req, res) => {
 
 app.post("/profile/edit", (req, res) => {
     if (req.body.password) {
-        // console.log(req.body.password);
         hash(req.body.password)
             .then((hashedPw) => {
-                console.log("hashed user password:", hashedPw);
-                db.updatePassword(req.session.userId, hashedPw).then(() => {
-                    console.log("updated");
-                });
+                db.updatePassword(req.session.userId, hashedPw).then(() => {});
             })
             .catch((err) => {
                 console.log("error in hash in POST edit password", err);
@@ -352,7 +333,6 @@ app.post("/profile/edit", (req, res) => {
 app.post("/signature/delete", (req, res) => {
     db.deleteSig(req.session.userId)
         .then(() => {
-            console.log("signature deleted");
             req.session.signed = "";
             res.redirect("/petition");
         })

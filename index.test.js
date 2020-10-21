@@ -9,7 +9,6 @@ test(" GET / logged out users get redirected to the registration page when they 
     return supertest(app)
         .get("/petition")
         .then((response) => {
-            // console.log(response);
             expect(response.headers.location).toBe("/register");
         });
 });
@@ -21,7 +20,6 @@ test("GET/ loggedin users redirected to the petition page when they go to the re
     return supertest(app)
         .get("/register" || "/login")
         .then((response) => {
-            // console.log(response);
             expect(response.headers.location).toBe("/petition");
         });
 });
@@ -34,7 +32,6 @@ test("POST / loggedin signers redirected to the thanksPage when they sign the pe
     return supertest(app)
         .post("/petition")
         .then((response) => {
-            // console.log(response);
             expect(response.headers.location).toBe("/petition/thanks");
         });
 });
@@ -46,7 +43,6 @@ test("GET / loggedin signers redirected to the thanksPage when they go to the pe
     return supertest(app)
         .get("/petition")
         .then((response) => {
-            // console.log(response);
             expect(response.headers.location).toBe("/petition/thanks");
         });
 });
@@ -59,7 +55,6 @@ test("GET / loggedin notSIgned users redirected to the petition when they go to 
     return supertest(app)
         .get("/petition/thanks" || "/petition/signed")
         .then((response) => {
-            // console.log(response);
             expect(response.headers.location).toBe("/petition");
         });
 });
